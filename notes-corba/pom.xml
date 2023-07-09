@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <groupId>de.fk</groupId>
+      <artifactId>notes</artifactId>
+      <version>1.0-SNAPSHOT</version>
+   </parent>
+
+   <artifactId>notes-corba</artifactId>
+   <packaging>jar</packaging>
+
+   <dependencies>
+      <dependency>
+         <groupId>de.fk</groupId>
+         <artifactId>notes-api</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.glassfish.corba</groupId>
+         <artifactId>glassfish-corba-orb</artifactId>
+         <version>4.2.4</version>
+      </dependency>
+      <!-- https://github.com/eclipse-ee4j/orb-gmbal/issues/22 -->
+      <dependency>
+         <groupId>org.glassfish.gmbal</groupId>
+         <artifactId>gmbal</artifactId>
+         <version>4.0.3</version>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>idlj-maven-plugin</artifactId>
+            <version>1.2.2</version>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>generate</goal>
+                  </goals>
+               </execution>
+            </executions>
+            <!--            <dependencies>-->
+            <!--               <dependency>-->
+            <!--                  <groupId>org.jacorb</groupId>-->
+            <!--                  <artifactId>jacorb-idl-compiler</artifactId>-->
+            <!--                  <version>3.9</version>-->
+            <!--               </dependency>-->
+            <!--            </dependencies>-->
+            <configuration>
+               <compiler>glassfish</compiler>
+               <debug>true</debug>
+               <sourceDirectory>${project.basedir}/../notes-api/src/main/idl/</sourceDirectory>
+               <sources>
+                  <source>
+                     <packageTranslations>
+                        <packageTranslation>
+                           <type>adress</type>
+                           <replacementPackage>de.wwag.adress</replacementPackage>
+                        </packageTranslation>
+                     </packageTranslations>
+                     <compatible>false</compatible>
+                     <emitStubs>true</emitStubs>
+                     <emitSkeletons>true</emitSkeletons>
+                  </source>
+               </sources>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>

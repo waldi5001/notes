@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar-bnd version="1.2" xmlns="http://websphere.ibm.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://websphere.ibm.com/xml/ns/javaee /home/fk/Documents/notes/notes-ejb-client/src/main/xsd/ibm-ejb-jar-bnd_1_2.xsd ">
+	<session name="NotesEjbService">
+		<interface class="de.fk.notes.ejb.api.NotesService" binding-name="ejb/notesEjbService" />
+	</session>
+</ejb-jar-bnd>

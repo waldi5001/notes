@@ -1,0 +1,45 @@
+module de {
+	module fk {
+		module notes {
+		
+			interface NotesCorbaService;
+	
+			struct Note;
+			struct ToDo;
+			struct Folder;
+			
+			typedef sequence<Note> Notes;
+			typedef sequence<ToDo> ToDos;
+			typedef sequence<Folder> Folders;
+			
+			struct Note {
+				long long id;
+				long long createdAt;
+				string description;
+			};
+			
+			struct ToDo {
+				long long id;
+				long long createdAt;
+				long long doneAt;
+				string description;
+				boolean done;
+			};
+			
+			struct Folder {
+				long long id;
+				string name;
+				sequence<Folder> parent;
+				Folders children;
+			};
+			
+			interface NotesCorbaService {
+				long long parse(in string text);
+				ToDos getToDos();
+				Note getNote(in long long id);
+			    Notes getNotes(in long long folderId);
+				Folders getAllFolders();
+			};
+		};
+	};
+};

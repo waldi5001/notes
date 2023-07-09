@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>de.fk</groupId>
+		<artifactId>notes</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>notes-backend</artifactId>
+	<packaging>war</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.fk</groupId>
+			<artifactId>notes-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fk</groupId>
+			<artifactId>notes-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--ejb 
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>javax.ejb-api</artifactId>
+			<version>3.2</version>
+			<scope>provided</scope>
+		</dependency>-->
+		<!-- corba -->
+		<dependency>
+			<groupId>org.glassfish.corba</groupId>
+			<artifactId>glassfish-corba-orb</artifactId>
+			<version>4.2.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.26</version><!-- <version>5.3.26</version> -->
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>notes-backend</warName>
+					<outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>idlj-maven-plugin</artifactId>
+				<version>1.2.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<!-- <dependencies> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.jacorb</groupId> -->
+				<!-- <artifactId>jacorb-idl-compiler</artifactId> -->
+				<!-- <version>3.9</version> -->
+				<!-- </dependency> -->
+				<!-- </dependencies> -->
+				<configuration>
+					<compiler>glassfish</compiler>
+					<debug>true</debug>
+					<sourceDirectory>${project.basedir}/../notes-api/src/main/idl/</sourceDirectory>
+					<sources>
+						<source>
+							<packageTranslations>
+								<packageTranslation>
+									<type>de.fk.notes</type>
+									<replacementPackage>de.fk.notes.corba</replacementPackage>
+								</packageTranslation>
+							</packageTranslations>
+							<compatible>false</compatible>
+							<emitSkeletons>true</emitSkeletons>
+						</source>
+					</sources>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>com.h2database</groupId>
+							<artifactId>h2</artifactId>
+							<version>1.4.200</version>
+							<type>jar</type>
+							<outputDirectory>${project.build.directory}/docker/notes-backend/build</outputDirectory>
+							<destFileName>h2.jar</destFileName>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.42.1</version>
+				<configuration>
+					<images>
+						<image>
+							<name>%a</name>
+							<alias>dockerfile</alias>
+							<build>
+								<!-- filter>@</filter -->
+								<contextDir>${project.basedir}/src/main/docker</contextDir>
+								<assemblies>
+									<assembly>
+										<descriptorRef>artifact</descriptorRef>
+									</assembly>
+								</assemblies>
+							</build>
+							<run>
+								<env>
+									<ENABLE_BASIC_LOGGING>true</ENABLE_BASIC_LOGGING>
+								</env>
+								<ports>
+									<port>7777:7777</port><!-- WAS Debug -->
+									<port>9043:9043</port>
+									<port>9443:9443</port>
+									<port>2809:2809</port>
+									<port>9403:9403</port><!-- CSIV2_SSL_SERVERAUTH_LISTENER_ADDRESS -->
+								</ports>
+								<volumes>
+									<bind>
+										<volume>${project.basedir}/src/main/docker/PASSWORD:/tmp/PASSWORD</volume>
+										<volume>${project.build.directory}:/work/app</volume>
+										<volume>${project.basedir}/src/main/docker:/work/config</volume>
+									</bind>
+								</volumes>
+							</run>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

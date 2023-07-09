@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application-client version="7" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application-client_7.xsd">
+	<display-name>notes-ejb-client</display-name>
+	<env-entry>
+		<env-entry-name>testString</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>Das ist das Haus</env-entry-value>
+	</env-entry>
+	<ejb-ref>
+		<!-- innerer name -->
+		<ejb-ref-name>ejb/notesEjbService</ejb-ref-name>
+		<ejb-ref-type>Session</ejb-ref-type>
+		<!-- globaler jndi name -->
+		<lookup-name>ejb/notesEjbService</lookup-name>
+	</ejb-ref>
+	<resource-env-ref>
+		<resource-env-ref-name>internerName</resource-env-ref-name>
+		<lookup-name>cell/persistent/globalNameSpaceBinding</lookup-name>
+	</resource-env-ref>
+</application-client>
